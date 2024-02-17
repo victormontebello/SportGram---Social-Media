@@ -1,0 +1,16 @@
+CREATE DATABASE IF NOT EXISTS sportgram;
+USE sportgram;
+
+DROP TABLE IF EXISTS usuarios;
+
+CREATE TABLE usuarios (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    nome VARCHAR(255) NOT NULL,
+    nick VARCHAR(255) NOT NULL unique,
+    email VARCHAR(255) NOT NULL,
+    senha VARCHAR(20) NOT NULL,
+    criadoEm TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    esporte VARCHAR(255) NOT NULL,
+    anosExperiencia INT NOT NULL,
+    possuiPatrocinio BOOLEAN
+) ENGINE=INNODB;
