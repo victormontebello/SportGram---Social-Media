@@ -1,6 +1,9 @@
 package rotas
 
-import "net/http"
+import (
+	"modulo/src/controllers"
+	"net/http"
+)
 
 var rotaLogin = Rota{
 	URI:                "/login",
