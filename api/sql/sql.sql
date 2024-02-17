@@ -8,7 +8,7 @@ CREATE TABLE usuarios (
     nome VARCHAR(255) NOT NULL,
     nick VARCHAR(255) NOT NULL unique,
     email VARCHAR(255) NOT NULL,
-    senha VARCHAR(20) NOT NULL,
+    senha VARCHAR(100) NOT NULL,
     criadoEm TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     esporte VARCHAR(255) NOT NULL,
     anosExperiencia INT NOT NULL,

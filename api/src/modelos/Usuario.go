@@ -2,8 +2,11 @@ package modelos
 
 import (
 	"errors"
+	"modulo/src/seguranca"
 	"strings"
 	"time"
+
+	"github.com/badoux/checkmail"
 )
 
 // Usuario representa um usuário utilizando a rede social
@@ -19,12 +22,14 @@ type Usuario struct {
 	PossuiPatrocinio bool      `json:"possuiPatrocinio,omitempty"`
 }
 
-func (usuario *Usuario) Preparar() error {
+func (usuario *Usuario) Preparar(etapa string) error {
 	if erro := usuario.validar(); erro != nil {
 		return erro
 	}
 
-	usuario.formatar()
+	if erro := usuario.formatar(etapa) ; erro != nil {
+		return erro
+	} 
 
 	return nil
 }
@@ -42,6 +47,10 @@ func (usuario *Usuario) validar() error {
 		return errors.New("o e-mail é obrigatório e não pode estar em branco")
 	}
 
+	if erro := checkmail.ValidateFormat(usuario.Email); erro != nil {
+		return errors.New("o e-mail inserido está em um formato inválido")
+	}
+
 	if usuario.Senha == "" {
 		return errors.New("a senha é obrigatória e não pode estar em branco")
 	}
@@ -53,9 +62,20 @@ func (usuario *Usuario) validar() error {
 	return nil
 }
 
-func (usuario *Usuario) formatar() {
+func (usuario *Usuario) formatar(etapa string) error {
 	usuario.Nome = strings.TrimSpace(usuario.Nome)
 	usuario.Nick = strings.TrimSpace(usuario.Nick)
 	usuario.Email = strings.TrimSpace(usuario.Email)
 	usuario.Esporte = strings.TrimSpace(usuario.Esporte)
+
+	if etapa == "cadastro" {
+		senhaComHash, erro := seguranca.Hash(usuario.Senha)
+
+		if erro != nil {
+			return erro
+		}
+
+		usuario.Senha = string(senhaComHash)
+	}
+	return nil
 }
