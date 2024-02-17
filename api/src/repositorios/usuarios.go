@@ -43,7 +43,7 @@ func (repositorio Usuarios) Buscar(nomeOuNick string) ([]modelos.Usuario, error)
 	nomeOuNick = fmt.Sprintf("%%%s%%", nomeOuNick)
 
 	linhas, erro := repositorio.db.Query(
-		"select id, nome, nick, email, criadoEm, esporte, anosExperiencia, possuiPatrocinio from usuarios where nome like ? or nick like ?",
+		"select id, nome, nick, email, senha, criadoEm, esporte, anosExperiencia, possuiPatrocinio from usuarios where nome like ? or nick like ?",
 		nomeOuNick, nomeOuNick,
 	)
 	if erro != nil {
@@ -60,6 +60,7 @@ func (repositorio Usuarios) Buscar(nomeOuNick string) ([]modelos.Usuario, error)
 			&usuario.Nome,
 			&usuario.Nick,
 			&usuario.Email,
+			&usuario.Senha,
 			&usuario.CriadoEm, 
 			&usuario.Esporte, 
 			&usuario.AnosExperiencia, 
@@ -104,4 +105,24 @@ func (repositorio Usuarios) BuscarPorID(ID uint64) (modelos.Usuario, error) {
 	}
 
 	return usuario, nil
+}
+
+// Atualizar altera as informações de um usuário no banco de dados
+func (repositorio Usuarios) Atualizar(usuario modelos.Usuario) error {
+
+	statement, erro := repositorio.db.Prepare(
+		"update usuarios set nome = ?, nick = ?, email = ?, esporte = ?, anosExperiencia = ?, possuiPatrocinio = ? where id = ?",
+	)
+	if erro != nil {
+		fmt.Println("Erro ao preparar a query de atualização de usuário: ", erro)
+		return erro
+	}
+	defer statement.Close()
+
+	if _, erro = statement.Exec(usuario.Nome, usuario.Nick, usuario.Email, usuario.Esporte, usuario.AnosExperiencia, usuario.PossuiPatrocinio, usuario.ID); erro != nil {
+		fmt.Println("Erro ao executar a query de atualização2 de usuário: ", erro)
+		return erro
+	}
+
+	return nil
 }
