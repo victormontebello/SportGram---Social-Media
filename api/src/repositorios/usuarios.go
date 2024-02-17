@@ -2,6 +2,7 @@ package repositorios
 
 import (
 	"database/sql"
+	"fmt"
 	"modulo/src/modelos"
 )
 
@@ -39,7 +40,7 @@ func (repositorio Usuarios) Criar(usuario modelos.Usuario) (uint64, error) {
 
 // Buscar traz todos os usuários que atendem um filtro
 func (repositorio Usuarios) Buscar(nomeOuNick string) ([]modelos.Usuario, error) {
-	nomeOuNick = "%" + nomeOuNick + "%"
+	nomeOuNick = fmt.Sprintf("%%%s%%", nomeOuNick)
 
 	linhas, erro := repositorio.db.Query(
 		"select id, nome, nick, email, criadoEm, esporte, anosExperiencia, possuiPatrocinio from usuarios where nome like ? or nick like ?",
@@ -55,7 +56,14 @@ func (repositorio Usuarios) Buscar(nomeOuNick string) ([]modelos.Usuario, error)
 		var usuario modelos.Usuario
 
 		if erro = linhas.Scan(
-			&usuario.ID, &usuario.Nome, &usuario.Nick, &usuario.Email, &usuario.CriadoEm, &usuario.Esporte, &usuario.AnosExperiencia, &usuario.PossuiPatrocinio,
+			&usuario.ID,
+			&usuario.Nome,
+			&usuario.Nick,
+			&usuario.Email,
+			&usuario.CriadoEm, 
+			&usuario.Esporte, 
+			&usuario.AnosExperiencia, 
+			&usuario.PossuiPatrocinio,
 		); erro != nil {
 			return nil, erro
 		}
