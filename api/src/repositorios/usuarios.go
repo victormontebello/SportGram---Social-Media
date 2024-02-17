@@ -41,14 +41,13 @@ func (repositorio Usuarios) Criar(usuario modelos.Usuario) (uint64, error) {
 // Buscar traz todos os usuários que atendem um filtro
 func (repositorio Usuarios) Buscar(nomeOuNick string) ([]modelos.Usuario, error) {
 	nomeOuNick = fmt.Sprintf("%%%s%%", nomeOuNick)
+	const query = "select id, nome, nick, email, senha, criadoEm, esporte, anosExperiencia, possuiPatrocinio from usuarios where nome like ? or nick like ?"
 
-	linhas, erro := repositorio.db.Query(
-		"select id, nome, nick, email, senha, criadoEm, esporte, anosExperiencia, possuiPatrocinio from usuarios where nome like ? or nick like ?",
-		nomeOuNick, nomeOuNick,
-	)
+	linhas, erro := repositorio.db.Query(query,nomeOuNick, nomeOuNick,)
 	if erro != nil {
 		return nil, erro
 	}
+	
 	defer linhas.Close()
 
 	var usuarios []modelos.Usuario
@@ -78,7 +77,8 @@ func (repositorio Usuarios) Buscar(nomeOuNick string) ([]modelos.Usuario, error)
 // BuscarPorID traz um usuário do banco de dados
 func (repositorio Usuarios) BuscarPorID(ID uint64) (modelos.Usuario, error) {
 	const semID = 0
-	linhas, erro := repositorio.db.Query("select id, nome, nick, email, criadoEm, esporte, anosExperiencia, possuiPatrocinio from usuarios where id = ?", ID)
+	const query = "select id, nome, nick, email, criadoEm, esporte, anosExperiencia, possuiPatrocinio from usuarios where id = ?"
+	linhas, erro := repositorio.db.Query(query, ID)
 	if erro != nil {
 		return modelos.Usuario{}, erro
 	}
@@ -109,18 +109,30 @@ func (repositorio Usuarios) BuscarPorID(ID uint64) (modelos.Usuario, error) {
 
 // Atualizar altera as informações de um usuário no banco de dados
 func (repositorio Usuarios) Atualizar(usuario modelos.Usuario) error {
-
-	statement, erro := repositorio.db.Prepare(
-		"update usuarios set nome = ?, nick = ?, email = ?, esporte = ?, anosExperiencia = ?, possuiPatrocinio = ? where id = ?",
-	)
+	const query = "update usuarios set nome = ?, nick = ?, email = ?, esporte = ?, anosExperiencia = ?, possuiPatrocinio = ? where id = ?"
+	statement, erro := repositorio.db.Prepare(query)
 	if erro != nil {
-		fmt.Println("Erro ao preparar a query de atualização de usuário: ", erro)
 		return erro
 	}
 	defer statement.Close()
 
 	if _, erro = statement.Exec(usuario.Nome, usuario.Nick, usuario.Email, usuario.Esporte, usuario.AnosExperiencia, usuario.PossuiPatrocinio, usuario.ID); erro != nil {
-		fmt.Println("Erro ao executar a query de atualização2 de usuário: ", erro)
+		return erro
+	}
+
+	return nil
+}
+
+// Deletar remove um usuário do banco de dados
+func (repositorio Usuarios) Deletar(ID uint64) error {
+	const query = "delete from usuarios where id = ?"
+	statement, erro := repositorio.db.Prepare(query)
+	if erro != nil {
+		return erro
+	}
+	defer statement.Close()
+
+	if _, erro = statement.Exec(ID); erro != nil {
 		return erro
 	}
 
