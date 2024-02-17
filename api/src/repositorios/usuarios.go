@@ -36,5 +36,3 @@ func (repositorio Usuarios) Criar(usuario modelos.Usuario) (uint64, error) {
 
 	return uint64(ultimoIDInserido), nil
 }
-
-
