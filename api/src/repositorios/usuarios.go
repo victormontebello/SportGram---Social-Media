@@ -73,3 +73,35 @@ func (repositorio Usuarios) Buscar(nomeOuNick string) ([]modelos.Usuario, error)
 
 	return usuarios, nil
 }
+
+// BuscarPorID traz um usuário do banco de dados
+func (repositorio Usuarios) BuscarPorID(ID uint64) (modelos.Usuario, error) {
+	const semID = 0
+	linhas, erro := repositorio.db.Query("select id, nome, nick, email, criadoEm, esporte, anosExperiencia, possuiPatrocinio from usuarios where id = ?", ID)
+	if erro != nil {
+		return modelos.Usuario{}, erro
+	}
+	defer linhas.Close()
+
+	var usuario modelos.Usuario
+	if linhas.Next() {
+		if erro = linhas.Scan(
+			&usuario.ID,
+			&usuario.Nome,
+			&usuario.Nick,
+			&usuario.Email,
+			&usuario.CriadoEm, 
+			&usuario.Esporte, 
+			&usuario.AnosExperiencia, 
+			&usuario.PossuiPatrocinio,
+		); erro != nil {
+			return modelos.Usuario{}, erro
+		}
+	}
+
+	if(usuario.ID == semID) {
+		return modelos.Usuario{}, fmt.Errorf("nenhum usuário encontrado com o id %d", ID)
+	}
+
+	return usuario, nil
+}
