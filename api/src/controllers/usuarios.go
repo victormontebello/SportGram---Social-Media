@@ -253,3 +253,27 @@ func PararDeSeguirUsuario(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusNoContent)
 	w.Write([]byte(fmt.Sprintf("Você parou de seguir o usuário de ID %d", usuarioId)))
 }
+
+func BuscarSeguidores(w http.ResponseWriter, r *http.Request) {
+	params := mux.Vars(r)
+	usuarioId, erro := strconv.ParseUint(params["usuarioId"], 10, 64)
+	if erro != nil {
+		respostas.Erro(w, http.StatusBadRequest, erro)
+		return
+	}
+
+	db, erro := banco.Conectar()
+	if erro != nil {
+		respostas.Erro(w, http.StatusInternalServerError, erro)
+		return
+	}
+
+	repositorio := repositorios.NovoRepositorioDeUsuarios(db)
+	seguidores, erro := repositorio.BuscarSeguidores(usuarioId)
+	if erro != nil {
+		respostas.Erro(w, http.StatusInternalServerError, erro)
+		return
+	}
+
+	respostas.JSON(w, http.StatusOK, seguidores)
+}
