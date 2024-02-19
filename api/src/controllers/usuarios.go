@@ -2,7 +2,9 @@ package controllers
 
 import (
 	"encoding/json"
+	"fmt"
 	"io/ioutil"
+	"modulo/src/autenticacao"
 	"modulo/src/banco"
 	"modulo/src/modelos"
 	"modulo/src/repositorios"
@@ -102,6 +104,17 @@ func AtualizarUsuario(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	usuarioIdNoToken, erro := autenticacao.ExtrairUsuarioID(r)
+	if erro != nil {
+		respostas.Erro(w, http.StatusUnauthorized, erro)
+		return
+	}
+
+	if usuarioIdNoToken != usuarioId {
+		respostas.Erro(w, http.StatusForbidden, fmt.Errorf("não é possível atualizar um usuário que não seja o seu"))
+		return
+	}
+
 	corpoRequest, erro := ioutil.ReadAll(r.Body)
 	if erro != nil {
 		respostas.Erro(w, http.StatusUnprocessableEntity, erro)
@@ -142,6 +155,17 @@ func DeletarUsuario(w http.ResponseWriter, r *http.Request) {
 
 	if erro != nil {
 		respostas.Erro(w, http.StatusBadRequest, erro)
+		return
+	}
+
+	usuarioIdNoToken, erro := autenticacao.ExtrairUsuarioID(r)
+	if erro != nil {
+		respostas.Erro(w, http.StatusUnauthorized, erro)
+		return
+	}
+
+	if usuarioIdNoToken != usuarioId {
+		respostas.Erro(w, http.StatusForbidden, fmt.Errorf("não é possível deletar um usuário que não seja o seu"))
 		return
 	}
 
