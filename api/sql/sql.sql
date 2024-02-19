@@ -2,6 +2,7 @@ CREATE DATABASE IF NOT EXISTS sportgram;
 USE sportgram;
 
 DROP TABLE IF EXISTS usuarios;
+DROP TABLE IF EXISTS seguidores;
 
 CREATE TABLE usuarios (
     id INT AUTO_INCREMENT PRIMARY KEY,
@@ -24,7 +25,7 @@ CREATE TABLE seguidores (
     seguidor_id INT NOT NULL,
     FOREIGN KEY (seguidor_id)
     REFERENCES usuarios(id)
-    ON DELETE CASCADE
+    ON DELETE CASCADE,
 
     PRIMARY KEY (usuario_id, seguidor_id)
 ) ENGINE=INNODB;
