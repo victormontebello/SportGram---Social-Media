@@ -53,6 +53,5 @@ func Login(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	respostas.JSON(w, http.StatusOK, usuarioSalvoNoBanco)
 	w.Write([]byte(token))
 }
