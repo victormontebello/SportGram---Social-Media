@@ -283,3 +283,36 @@ func CurtirPublicacao(w http.ResponseWriter, r *http.Request){
 
 	w.WriteHeader(http.StatusNoContent)
 }
+
+func DescurtirPublicacao(w http.ResponseWriter, r *http.Request){
+	params := mux.Vars(r)
+
+	publicacaoID, erro := strconv.ParseUint(params["publicacaoId"], 10, 64)
+	if erro != nil {
+		respostas.Erro(w, http.StatusBadRequest, erro)
+		return
+	}
+
+	_, erro = autenticacao.ExtrairUsuarioID(r)
+	if erro != nil {
+		respostas.Erro(w, http.StatusUnauthorized, erro)
+		return
+	}
+
+	db, erro := banco.Conectar()
+	if erro != nil {
+		respostas.Erro(w, http.StatusInternalServerError, erro)
+		return
+	}
+
+	defer db.Close()
+
+	repositorio := repositorios.NovoRepositorioDePublicacoes(db)
+	erro = repositorio.Descurtir(publicacaoID)
+	if erro != nil {
+		respostas.Erro(w, http.StatusInternalServerError, erro)
+		return
+	}
+
+	w.WriteHeader(http.StatusNoContent)
+}
