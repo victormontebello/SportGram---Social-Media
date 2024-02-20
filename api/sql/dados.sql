@@ -10,3 +10,10 @@ INSERT into seguidores (usuario_id, seguidor_id)
     (1, 3), --user follows user4
     (2, 1), --user2 follows user
     (3, 1); --user4 follows user
+
+
+INSERT INTO publicacoes (titulo, conteudo, autor_id, midia)
+    VALUES
+    ("Futebol é vida", "Vamos jogar futebol", 1, NULL),
+    ("Volei é vida", "Vamos jogar volei", 2, NULL),
+    ("Basquete é vida", "Vamos jogar basquete", 3, NULL);
