@@ -29,3 +29,19 @@ CREATE TABLE seguidores (
 
     PRIMARY KEY (usuario_id, seguidor_id)
 ) ENGINE=INNODB;
+
+CREATE TABLE publicacoes(
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    titulo VARCHAR(255) NOT NULL,
+    conteudo varchar(255) NOT NULL,
+    midia TINYBLOB NULL,
+    autor_id INT NOT NULL,
+    FOREIGN KEY (autor_id)
+    REFERENCES usuarios(id)
+    ON DELETE CASCADE,
+
+    curtidas INT DEFAULT 0,
+    criadaEm TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+
+) ENGINE=INNODB;
+

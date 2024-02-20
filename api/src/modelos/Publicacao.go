@@ -11,4 +11,5 @@ type Publicacao struct {
 	AutorNick    string `json:"autorNick,omitempty"`
 	Curtidas     uint64 `json:"curtidas"`
 	CriadaEm     time.Time `json:"criadaEm,omitempty"`
+	Midia 	   []byte `json:"midia,omitempty"`
 }
