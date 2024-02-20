@@ -281,7 +281,7 @@ func CurtirPublicacao(w http.ResponseWriter, r *http.Request){
 		return
 	}
 
-	w.WriteHeader(http.StatusNoContent)
+	respostas.JSON(w, http.StatusOK, "curtido com sucesso!")
 }
 
 func DescurtirPublicacao(w http.ResponseWriter, r *http.Request){
@@ -314,5 +314,5 @@ func DescurtirPublicacao(w http.ResponseWriter, r *http.Request){
 		return
 	}
 
-	w.WriteHeader(http.StatusNoContent)
+	respostas.JSON(w, http.StatusOK, "descurtido com sucesso!")
 }
